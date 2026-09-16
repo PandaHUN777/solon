@@ -14,7 +14,7 @@ Description: |-
   HTTPS locales de confiance pour chaque conteneur (https://<nom>.solon.local), partage rapide des dossiers
   Windows, mise en veille des conteneurs inactifs, shell de débogage même dans les images sans shell, courbes
   CPU, mémoire et réseau en direct. Aucune télémétrie.
-  Nécessite Windows 10 22H2 ou Windows 11, édition Pro, Entreprise ou Éducation, avec la virtualisation matérielle activée.
+  Nécessite Windows 10 22H2 ou Windows 11, toute édition, Famille comprise, avec la virtualisation matérielle activée.
 Tags:
 - conteneurs
 - docker
