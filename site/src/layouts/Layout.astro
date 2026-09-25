@@ -30,7 +30,14 @@ const downloadUrl = (await latestInstaller())?.url ?? LATEST;
     <link rel="alternate" hreflang="fr" href={`${Astro.site}${langPath("fr").slice(1)}`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${Astro.site}${base.replace(/^\//, "")}${base ? "/" : ""}shots/activity-light.png`} />
+    <meta property="og:type" content="website" />
+    <!-- Carte de partage : le visuel de marque plutôt qu'une capture d'écran, et le grand format sur X,
+         Bluesky, Discord et Slack, qui décident du clic. -->
+    <meta property="og:image" content={`${Astro.site}${base.replace(/^\//, "")}${base ? "/" : ""}social-preview.png`} />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content="Solon — Docker on Windows, without Docker Desktop or WSL" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f860c0" />
     <script is:inline>
       // Thème choisi par le visiteur (sinon celui du système), appliqué avant le premier rendu.
