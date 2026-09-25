@@ -16,9 +16,12 @@ tiny, invisible Linux machine managed entirely by Solon.
 Solon **is not** a front-end for an existing Docker Desktop. It replaces it: Docker engine, Compose, images,
 volumes, networks, terminal, logs, a system-tray icon, and a few things nothing else does on Windows.
 
-> Project status (8 September 2026): **0.1.0, beta**. Everything below works on the development machine
-> (Windows 11 Pro) and on a fresh machine with Docker Desktop and WSL removed. The installer is **not signed
-> yet** (SmartScreen warning). Feedback and bug reports are very welcome.
+> Project status (26 September 2026): **0.1.13**, thirteen releases in three weeks, written by one person.
+> It runs my own projects every day, and it has been tested on exactly two machines: a Windows 11 Pro PC and a
+> fresh Windows 11 Home VM. The installer is **not code-signed yet** (SmartScreen warning; SHA-256 published
+> with every release). Expect rough edges on hardware I do not have — and please
+> [tell me where it breaks](https://github.com/v94lere/solon/issues/1). That issue is the most useful place to
+> start; ideas and pull requests are just as welcome.
 
 ![Containers list](docs/screenshots/containers.png)
 
@@ -325,6 +328,23 @@ the engine. Unsynced writes of the last two seconds may be lost, as on any Linux
   on its page if that matters.
 - `curl.exe` on Windows rejects the local HTTPS certificates unless you pass `--ssl-no-revoke` (same as mkcert);
   browsers and .NET accept them.
+
+## Where it is going, and where you can help
+
+Solon is young and the list of what is left to do is longer than the list of what is done. These are the
+next things I want to build, each with an issue you can comment on or take:
+
+- **Update images from the app** ([#3](https://github.com/v94lere/solon/issues/3)): a badge when a newer image exists, one button to pull and recreate.
+- **Import from Docker Desktop** ([#4](https://github.com/v94lere/solon/issues/4)): find its volumes and copy them into Solon, so switching costs nothing.
+- **Relay UDP published ports** ([#5](https://github.com/v94lere/solon/issues/5)), the last gap against `docker run -p`.
+- **Hot reload from Windows** ([#7](https://github.com/v94lere/solon/issues/7)): tell the container when a Windows file changes, so Vite, nodemon and Odoo's reloader notice.
+- **Windows 10**, tested rather than assumed.
+- **A signed installer**: the certificate sponsor asked for community traction first, so this one depends
+  on people finding the project useful.
+
+Good places to start are the issues labelled [good first issue](https://github.com/v94lere/solon/labels/good%20first%20issue)
+and [help wanted](https://github.com/v94lere/solon/labels/help%20wanted). `CONTRIBUTING.md` builds the whole
+thing in one command, and documentation, translations and bug reproductions count as much as code.
 
 ## Documentation
 

@@ -16,9 +16,13 @@ en quelques secondes dans une machine minuscule et invisible, gérée entièreme
 Solon **n'est pas** une interface pour un Docker Desktop déjà installé. Il remplace Docker Desktop :
 moteur Docker, Compose, images, volumes, réseaux, terminal, journaux, et une icône dans la barre des tâches.
 
-> État du projet (8 septembre 2026) : **0.1.0, bêta**. Tout ce qui suit fonctionne sur la machine de
-> développement (Windows 11 Pro) et sur une machine vierge sans Docker Desktop ni WSL. L'installeur n'est
-> **pas encore signé** (avertissement SmartScreen). Retours et rapports de bug bienvenus.
+> État du projet (26 septembre 2026) : **0.1.13**, treize versions en trois semaines, écrit par une seule
+> personne. Solon fait tourner mes propres projets tous les jours, et n'a été testé que sur deux machines :
+> un PC Windows 11 Pro et une machine virtuelle Windows 11 Famille neuve. L'installeur n'est **pas encore
+> signé** (avertissement SmartScreen ; empreinte SHA-256 publiée avec chaque version). Il reste sûrement des
+> aspérités sur du matériel que je n'ai pas :
+> [dites-moi ce qui casse chez vous](https://github.com/v94lere/solon/issues/1). Les idées et les
+> contributions sont tout aussi bienvenues.
 
 ## Ce que Solon fait
 
@@ -352,6 +356,27 @@ perdues, comme sur toute machine Linux.
   requête vers github.com, désactivable). « Installer la mise à jour » télécharge l'installateur, vérifie son
   SHA-256 avec le `SHA256SUMS.txt` de la version, puis Windows demande l'autorisation ; Solon se rouvre et
   relance ce qui tournait. Rien ne s'installe sans vous.
+
+## Où ça va, et où vous pouvez aider
+
+Solon est jeune, et la liste de ce qui reste à faire est plus longue que celle de ce qui est fait. Voici les
+prochains chantiers, chacun avec une issue où commenter ou se lancer :
+
+- **Mettre à jour les images depuis l'application** ([#3](https://github.com/v94lere/solon/issues/3)) : une
+  pastille quand une version plus récente existe, un bouton pour la tirer et recréer les conteneurs.
+- **Importer depuis Docker Desktop** ([#4](https://github.com/v94lere/solon/issues/4)) : retrouver ses volumes
+  et les copier dans Solon, pour que changer d'outil ne coûte rien.
+- **Relayer les ports UDP publiés** ([#5](https://github.com/v94lere/solon/issues/5)), le dernier écart face à
+  `docker run -p`.
+- **Rechargement à chaud depuis Windows** ([#7](https://github.com/v94lere/solon/issues/7)) : prévenir le
+  conteneur qu'un fichier Windows a changé, pour que Vite, nodemon et le rechargeur d'Odoo le voient.
+- **Windows 10**, testé et non supposé.
+- **Un installateur signé** : le sponsor de certificat demande d'abord de la notoriété, donc celui-ci dépend
+  des gens qui trouveront le projet utile.
+
+Pour commencer, les issues marquées [good first issue](https://github.com/v94lere/solon/labels/good%20first%20issue)
+et [help wanted](https://github.com/v94lere/solon/labels/help%20wanted). `CONTRIBUTING.md` compile le tout en
+une commande, et la documentation, les traductions et les reproductions de bogues comptent autant que le code.
 
 ## Documentation
 
