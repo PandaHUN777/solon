@@ -379,7 +379,7 @@
   },
   "prereq": {
     "title": "System check",
-    "windows_edition": "Windows edition (Pro, Enterprise or Education)",
+    "windows_edition": "Windows edition (any, Home included)",
     "virtualization_firmware": "Hardware virtualization (VT-x / AMD-V)",
     "service_vmcompute": "Windows Host Compute Service",
     "service_hns": "Windows Host Network Service",
@@ -388,6 +388,9 @@
     "ok": "OK",
     "failed": "Needs attention",
     "warning": "Warning",
+    "enable": "Enable the required Windows components",
+    "enabling": "Windows is asking for permission…",
+    "enable_hint": "Windows asks for permission, then may need one restart.",
     "refresh": "Check again"
   },
   "tray": {
@@ -655,6 +658,7 @@
   },
   "updates": {
     "title": "Updates",
+    "from_store": "Solon was installed from the Microsoft Store, so the Store keeps it up to date.",
     "check_at_launch": "Check for a new version when Solon starts",
     "privacy": "One request to github.com for the list of releases. Nothing about you or your PC is sent, and nothing is installed without you.",
     "check_now": "Check now",

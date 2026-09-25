@@ -5,6 +5,7 @@
 // vérifie son SHA-256 contre le SHA256SUMS.txt de la version, puis le lance (Windows demande l'élévation).
 import { getVersion } from "@tauri-apps/api/app";
 import { Channel, invoke } from "@tauri-apps/api/core";
+import { system } from "./api";
 
 export const RELEASES_URL = "https://github.com/v94lere/solon/releases";
 const API = "https://api.github.com/repos/v94lere/solon/releases/latest";
@@ -28,6 +29,15 @@ export interface UpdateInfo {
   /** Notes de version (Markdown brut), tronquées. */
   notes: string;
   checkedAt: number;
+}
+
+/** Vrai depuis un paquet MSIX : c'est le Store qui met à jour, l'application ne s'en mêle pas. */
+let packagedCache: boolean | null = null;
+export async function isPackaged(): Promise<boolean> {
+  if (packagedCache === null) {
+    packagedCache = await system.isPackaged().catch(() => false);
+  }
+  return packagedCache;
 }
 
 export function updateCheckEnabled(): boolean {

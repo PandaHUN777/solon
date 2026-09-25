@@ -55,6 +55,7 @@
     "resources": {
       "../../../target/release/solon-service.exe": "solon-service.exe",
       "../../../installer/setup.ps1": "installer/setup.ps1",
+        "../../../installer/setup-features.ps1": "installer/setup-features.ps1",
       "../../../target/release/docker.exe": "bin/docker.exe",
       "../../../installer/vendor/docker-cli.exe": "bin/docker-cli.exe",
       "../../../installer/vendor/cli-plugins/docker-compose.exe": "bin/cli-plugins/docker-compose.exe",

@@ -119,6 +119,8 @@ export const engine = {
   stop: (force = false) => invoke<void>("engine_stop", { force }),
   restart: () => invoke<void>("engine_restart"),
   prereq: () => invoke<PrereqReport>("prereq_report"),
+  /** Lance l'activation des composants Windows manquants (Windows demande l'autorisation). */
+  enableFeatures: () => invoke<void>("prereq_enable_features"),
   settingsGet: () => invoke<Settings>("settings_get"),
   settingsSet: (settings: Settings) => invoke<void>("settings_set", { settings }),
   logsDir: () => invoke<string>("paths_logs_dir"),
@@ -349,6 +351,8 @@ export const machineShell = {
 
 export const system = {
   openInVsCode: (dir: string) => invoke<void>("open_in_vscode", { dir }),
+  /** Solon lancé depuis un paquet MSIX : les mises à jour viennent du Microsoft Store. */
+  isPackaged: () => invoke<boolean>("app_is_packaged"),
 };
 
 // ---- Sauvegarde et restauration d'un projet (zip : fichiers Compose + volumes) ----

@@ -135,6 +135,44 @@ fn open_in_vscode(dir: String) -> Result<(), String> {
     tauri_plugin_opener::open_url(url, None::<&str>).map_err(|e| e.to_string())
 }
 
+/// Vrai quand Solon tourne depuis un paquet MSIX (Microsoft Store ou paquet autonome).
+/// Deux choses en dépendent : les mises à jour, qui viennent alors du Store et non de GitHub, et
+/// l'activation des composants Windows, que l'installeur classique fait et que le paquet ne peut pas.
+#[tauri::command]
+fn app_is_packaged() -> bool {
+    use windows::Win32::Storage::Packaging::Appx::GetCurrentPackageFullName;
+    let mut len: u32 = 0;
+    // Sans tampon, l'appel renvoie ERROR_INSUFFICIENT_BUFFER si le processus a une identité de
+    // paquet, et APPMODEL_ERROR_NO_PACKAGE sinon.
+    let err = unsafe { GetCurrentPackageFullName(&mut len, None) };
+    const APPMODEL_ERROR_NO_PACKAGE: u32 = 15700;
+    err.0 != APPMODEL_ERROR_NO_PACKAGE
+}
+
+/// Active les composants Windows requis (Plateforme de machine virtuelle, Hyper-V si l'édition
+/// l'a) en lançant `installer\setup-features.ps1` élevé : Windows demande l'autorisation.
+/// Nécessaire pour le paquet du Microsoft Store, qui s'installe sans élévation et ne peut donc pas
+/// toucher aux composants ; l'installeur classique, lui, l'a déjà fait.
+#[tauri::command]
+fn prereq_enable_features() -> Result<(), String> {
+    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    let script = exe
+        .parent()
+        .ok_or("dossier de l'application introuvable")?
+        .join("installer")
+        .join("setup-features.ps1");
+    if !script.is_file() {
+        return Err(format!("script introuvable : {}", script.display()));
+    }
+    update::launch_elevated(
+        std::path::Path::new("powershell.exe"),
+        &format!(
+            "-NoProfile -ExecutionPolicy Bypass -File \"{}\"",
+            script.display()
+        ),
+    )
+}
+
 #[tauri::command]
 fn paths_logs_dir() -> String {
     let base = std::env::var_os("ProgramData")
@@ -214,6 +252,8 @@ pub fn run() {
             engine_restart,
             engine_subscribe,
             prereq_report,
+            prereq_enable_features,
+            app_is_packaged,
             settings_get,
             settings_set,
             service_exec,

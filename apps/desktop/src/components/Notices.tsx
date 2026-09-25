@@ -7,7 +7,7 @@ import { reclaimSpace } from "../reclaim";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { UpdateActions } from "./UpdateActions";
 import { useEngine } from "../engine";
-import { checkForUpdate, skipVersion, skippedVersion, updateCheckEnabled, type UpdateInfo } from "../updates";
+import { checkForUpdate, isPackaged, skipVersion, skippedVersion, updateCheckEnabled, type UpdateInfo } from "../updates";
 
 /** Sous ce seuil, Solon prévient : le disque de données grossit dans ce lecteur et Windows lui-même se
  *  dégrade quand il est plein. 5 % du lecteur, borné entre 5 Gio (petit SSD) et 20 Gio : sur un disque
@@ -42,11 +42,14 @@ export function Notices({ onOpenSettings }: { onOpenSettings: () => void }) {
   useEffect(() => {
     if (!updateCheckEnabled()) return;
     const timer = window.setTimeout(() => {
-      checkForUpdate()
-        .then((info) => {
-          if (info.available && skippedVersion() !== info.latest) setUpdate(info);
-        })
-        .catch(() => {});
+      void isPackaged().then((packaged) => {
+        if (packaged) return;
+        return checkForUpdate()
+          .then((info) => {
+            if (info.available && skippedVersion() !== info.latest) setUpdate(info);
+          })
+          .catch(() => {});
+      });
     }, 10_000);
     return () => window.clearTimeout(timer);
   }, []);

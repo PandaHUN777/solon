@@ -8,7 +8,7 @@ import { containers, engine, formatBytes, host, images, type HostDiskInfo, type 
 import { reclaimSpace } from "../reclaim";
 import { useEngine } from "../engine";
 import { imageUsage } from "../usage";
-import { checkForUpdate, lastCheck, RELEASES_URL, setUpdateCheckEnabled, updateCheckEnabled, type UpdateInfo } from "../updates";
+import { checkForUpdate, isPackaged, lastCheck, RELEASES_URL, setUpdateCheckEnabled, updateCheckEnabled, type UpdateInfo } from "../updates";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { UpdateActions } from "./UpdateActions";
 import { MiniMeter } from "./ui";
@@ -20,6 +20,10 @@ export function UpdatesCard() {
   const [info, setInfo] = useState<UpdateInfo | null>(lastCheck());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [packaged, setPackaged] = useState(false);
+  useEffect(() => {
+    void isPackaged().then(setPackaged);
+  }, []);
 
   async function check() {
     setBusy(true);
@@ -37,6 +41,10 @@ export function UpdatesCard() {
   return (
     <section className="card mt-4 p-4">
       <h2 className="font-semibold">{t("updates.title")}</h2>
+      {packaged ? (
+        <p className="mt-2" style={{ color: "var(--ink-2)" }}>{t("updates.from_store")}</p>
+      ) : (
+      <>
       <label className="mt-2 flex items-center gap-2">
         <input type="checkbox" checked={enabled} onChange={(e) => { setEnabled(e.target.checked); setUpdateCheckEnabled(e.target.checked); }} />
         {t("updates.check_at_launch")}
@@ -54,6 +62,8 @@ export function UpdatesCard() {
         {error && <span style={{ color: "var(--bad)" }}>{error}</span>}
       </div>
       {checkedAt && <p className="mt-2 kbd-hint">{t("updates.last_check", { date: checkedAt })} · <button type="button" className="link-btn" onClick={() => void openUrl(RELEASES_URL)}>{t("updates.all_releases")}</button></p>}
+      </>
+      )}
     </section>
   );
 }

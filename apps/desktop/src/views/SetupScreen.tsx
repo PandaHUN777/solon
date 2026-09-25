@@ -23,6 +23,7 @@ function PrereqList() {
   const { t } = useTranslation();
   const [report, setReport] = useState<PrereqReport | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [enabling, setEnabling] = useState(false);
   const load = () => {
     setError(null);
     engine
@@ -31,6 +32,9 @@ function PrereqList() {
       .catch((e: unknown) => setError(String(e)));
   };
   useEffect(load, []);
+  // La virtualisation manque quand la Plateforme de machine virtuelle n'est pas activée. L'installeur
+  // classique l'active ; le paquet du Microsoft Store ne le peut pas, d'où ce bouton.
+  const needsFeatures = report?.items.some((it) => !it.ok && it.blocking && (it.id === "hcs_api" || it.id === "service_vmcompute")) ?? false;
   return (
     <section className="card p-3" aria-label={t("prereq.title")}>
       <div className="flex items-center">
@@ -51,6 +55,26 @@ function PrereqList() {
             </li>
           ))}
         </ul>
+      )}
+      {needsFeatures && (
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            disabled={enabling}
+            onClick={() => {
+              setEnabling(true);
+              setError(null);
+              engine
+                .enableFeatures()
+                .catch((e: unknown) => setError(String(e)))
+                .finally(() => setEnabling(false));
+            }}
+          >
+            {enabling ? t("prereq.enabling") : t("prereq.enable")}
+          </button>
+          <span className="kbd-hint">{t("prereq.enable_hint")}</span>
+        </div>
       )}
     </section>
   );

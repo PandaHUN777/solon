@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifeste MSIX de Solon (Microsoft Store et installation autonome).
+
+  Les valeurs entre @ sont remplacées par build-msix.ps1 : identité et éditeur viennent du Partner
+  Center pour une soumission au Store, et valent des valeurs de développement sinon.
+
+  Trois choses méritent une explication :
+
+  1. packagedServices — Solon a besoin d'un service Windows tournant en compte système, parce que
+     l'API de virtualisation de Windows (HCS) refuse la création d'une machine sans élévation. Un
+     paquet MSIX déclare son service ici plutôt que de l'installer lui-même ; la capacité est dite
+     « restreinte » et doit être approuvée par Microsoft lors de la soumission au Store.
+  2. Aucun composant Windows n'est activé à l'installation — un MSIX s'installe sans élévation.
+     L'application propose l'activation à la demande (installer\setup-features.ps1, lancé élevé).
+  3. Le `docker` de Solon n'est pas ajouté au PATH machine mais déclaré en alias d'exécution, ce qui
+     est le mécanisme prévu par MSIX et se nettoie tout seul à la désinstallation.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap3 uap10 desktop desktop6 rescap">
+
+  <Identity
+    Name="@IDENTITY_NAME@"
+    Publisher="@PUBLISHER@"
+    Version="@VERSION@"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Solon</DisplayName>
+    <PublisherDisplayName>@PUBLISHER_DISPLAY@</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Docker on Windows without Docker Desktop or WSL: a standalone container manager with its own tiny Linux machine.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19045.0" MaxVersionTested="10.0.26200.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-US" />
+    <Resource Language="fr-FR" />
+  </Resources>
+
+  <Applications>
+    <Application Id="Solon" Executable="solon.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Solon"
+        Description="Docker on Windows without Docker Desktop or WSL."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile
+          ShortName="Solon"
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          Square310x310Logo="Assets\Square310x310Logo.png"
+          Square71x71Logo="Assets\Square71x71Logo.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <!-- Le service du moteur. Windows le crée, le démarre et le retire avec le paquet. -->
+        <desktop6:Extension Category="windows.service" Executable="solon-service.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop6:Service Name="SolonService" StartupType="auto" StartAccount="localSystem" Arguments="run" />
+        </desktop6:Extension>
+        <!-- `solon` depuis n'importe quel terminal. -->
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="solon.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="solon.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+
+    <!-- Le CLI Docker de Solon : pas d'entrée dans le menu Démarrer, seulement l'alias `docker`. -->
+    <Application Id="Docker" Executable="bin\docker.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        AppListEntry="none"
+        DisplayName="Solon docker CLI"
+        Description="The docker and docker compose commands, pointed at the Solon engine."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="bin\docker.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="docker.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <!-- Déclarer un service dans le paquet, et le faire tourner en compte système : deux capacités
+         restreintes distinctes, toutes deux soumises à l'accord de Microsoft pour une publication
+         au Store. Le compte système est imposé par l'API de virtualisation de Windows. -->
+    <rescap:Capability Name="packagedServices" />
+    <rescap:Capability Name="localSystemServices" />
+    <rescap:Capability Name="allowElevation" />
+  </Capabilities>
+</Package>

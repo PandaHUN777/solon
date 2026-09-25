@@ -209,7 +209,7 @@ pub async fn update_install(app: tauri::AppHandle, path: String) -> Result<(), S
 
 /// `ShellExecuteW` avec le verbe `runas` : Windows affiche la demande d'élévation. Renvoie une erreur
 /// lisible si l'utilisateur refuse (SE_ERR_ACCESSDENIED, 5).
-fn launch_elevated(path: &Path, args: &str) -> Result<(), String> {
+pub(crate) fn launch_elevated(path: &Path, args: &str) -> Result<(), String> {
     use windows::Win32::UI::Shell::ShellExecuteW;
     use windows::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
     use windows::core::{HSTRING, PCWSTR};
