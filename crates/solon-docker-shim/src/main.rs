@@ -100,10 +100,11 @@ fn update_plugin_dir_list(list: &mut Vec<serde_json::Value>, plugins_dir: &std::
         })
     });
 
-    if !list
-        .iter()
-        .any(|entry| entry.as_str().is_some_and(|dir| dir.eq_ignore_ascii_case(&wanted)))
-    {
+    if !list.iter().any(|entry| {
+        entry
+            .as_str()
+            .is_some_and(|dir| dir.eq_ignore_ascii_case(&wanted))
+    }) {
         list.push(serde_json::Value::String(wanted));
     }
 }
@@ -200,8 +201,7 @@ mod tests {
 
     #[test]
     fn removes_only_stale_solon_plugin_dirs() {
-        let temp =
-            std::env::temp_dir().join(format!("solon-docker-shim-{}", std::process::id()));
+        let temp = std::env::temp_dir().join(format!("solon-docker-shim-{}", std::process::id()));
         let current = temp
             .join("ValereNeveux.Solon_0.1.14.0_x64__publisher")
             .join("bin")
